@@ -129,7 +129,7 @@ dJSTable <- paste0("['", dNew$name,  "', ",
                    dNew$numericIntervention, ", ",
                    "'", dNew$catVar, "', ",
                    dNew$size, ", ",
-                   "'http://", dNew$link, "', ",
+                   "'", dNew$link, "', ",
                    "'", dNew$name, "'",  # names repeats, 'cos it's a tooltip (== hovertext)
                    # except this currently doesn't work with Google
                    # charts API when using bubble plots.
