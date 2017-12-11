@@ -245,17 +245,3 @@ write.table(allHtml, file=fileName,
 browseURL(fileName)
 
 }
-
-setwd("D:/Documents/susanne/shiny")
-data <- readxl::read_excel("newMockData.xlsx") %>% as.data.frame
-
-GoogleEvidenceMap(data = data, 
-                  name = "names",
-                  link = "ID",
-                  outcome = "outcomes",
-                  intervention = "interventions",
-                  catVar = "confidence",
-                  size = "SR",
-                  title = "Bubble plot",
-                  catColors = c("green", "papayawhip", "slategrey", "mediumseagreen"),
-                  fileName = "bubbleChart.html")
