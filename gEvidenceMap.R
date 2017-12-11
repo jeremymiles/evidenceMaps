@@ -36,16 +36,6 @@ GoogleEvidenceMap <- function(data, name, link,outcome, intervention, size,
   interventionLabels <- c("ActiveSurveillance", "SLNBiopsy",
     "Hormone", "Lumpectomy", "LumpectomyRT", "Mastectomy")
   
-  if(!is.null(outcomeLabels) & 
-     length(outcomeLabels) != length(unique(data[[outcome]]))) {
-    stop("Wrong number of outcome variable labels supplied")
-  }
-  
-  if(!is.null(interventionLabels) & 
-     length(interventionLabels) != length(unique(data[[intervention]]))) {
-    stop("Wrong number of intervention variable labels supplied")
-  }
-
   if(!is.null(catColors) & 
      length(catColors) != length(unique(data[[catVar]]))) {
     stop("Wrong number of category color labels supplied")
