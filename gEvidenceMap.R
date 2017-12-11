@@ -1,9 +1,6 @@
 library(readxl)
 
 
-setwd("D:/Documents/susanne/shiny")
-
-data <- readxl::read_excel("newMockData.xlsx") %>% as.data.frame
 
 #' @param data The data file.
 #' @param name The id variable that will be displayed as a label on 
@@ -252,13 +249,16 @@ browseURL(fileName)
 
 }
 
+setwd("D:/Documents/susanne/shiny")
+data <- readxl::read_excel("newMockData.xlsx") %>% as.data.frame
 
-GoogleEvidenceMap(name = "names",
-link = "ID",
-outcome = "outcomes",
-intervention = "interventions",
-catVar = "confidence",
-size = "SR",
-title = "Bubble plot",
-catColors = c("green", "papayawhip", "slategrey", "mediumseagreen"),
-fileName = "bubbleChart.html")
+GoogleEvidenceMap(data = data, 
+                  name = "names",
+                  link = "ID",
+                  outcome = "outcomes",
+                  intervention = "interventions",
+                  catVar = "confidence",
+                  size = "SR",
+                  title = "Bubble plot",
+                  catColors = c("green", "papayawhip", "slategrey", "mediumseagreen"),
+                  fileName = "bubbleChart.html")
