@@ -1,6 +1,3 @@
-library(readxl)
-
-
 
 #' @param data The data file.
 #' @param name The id variable that will be displayed as a label on 
@@ -30,9 +27,9 @@ GoogleEvidenceMap <- function(data, name, link,outcome, intervention, size,
                               title = "Bubble Plot",
                               fileName = "BubbleChart.html") {
   
-  
-  dNew <- data.frame(id = data[id])
-  
+
+    
+  dNew <- data.frame(id = data[name])  
   
   # remove when function
   outcomeLabels <- c("CE1", "CE2", "PC1", "PC2", "AE1", "AE2")
@@ -96,7 +93,7 @@ nMissing <- apply(dNew,
 if (max(nMissing) > 0) {
   warning("Some missing data found. These lines were removed from the data")
 }
-d <- d[nMissing == 0, ]
+dNew <- dNew[nMissing == 0, ]
 
 # Need to find duplicates, and jitter them
 # Creat table of counts
