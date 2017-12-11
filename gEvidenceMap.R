@@ -25,23 +25,14 @@ data <- readxl::read_excel("newMockData.xlsx") %>% as.data.frame
 
 
 
-#GoogleEvidenceMap <- function(data, name, link,outcome, intervention, size, 
-#                              outcomeLabels = NULL,
-#                              interventionLabels = NULL,
-#                              catVar,
-#                              catColors = NULL,
-#                              title = "Bubble Plot",
-#                              fileName = "BubbleChart.html") {
+GoogleEvidenceMap <- function(data, name, link,outcome, intervention, size, 
+                              outcomeLabels = NULL,
+                              interventionLabels = NULL,
+                              catVar,
+                              catColors = NULL,
+                              title = "Bubble Plot",
+                              fileName = "BubbleChart.html") {
   
-  name = "names"
-  link = "ID"
-  outcome = "outcomes"
-  intervention = "interventions"
-  catVar = "confidence"
-  size = "SR"
-  title = "Bubble plot"
-  catColors = c("green", "papayawhip", "slategrey", "mediumseagreen")
-  fileName = "bubbleChart.html"
   
   dNew <- data.frame(id = data[id])
   
@@ -260,3 +251,14 @@ write.table(allHtml, file=fileName,
 browseURL(fileName)
 
 }
+
+
+GoogleEvidenceMap(name = "names",
+link = "ID",
+outcome = "outcomes",
+intervention = "interventions",
+catVar = "confidence",
+size = "SR",
+title = "Bubble plot",
+catColors = c("green", "papayawhip", "slategrey", "mediumseagreen"),
+fileName = "bubbleChart.html")
