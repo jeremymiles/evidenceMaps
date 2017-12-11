@@ -28,13 +28,25 @@ GoogleEvidenceMap <- function(data, name, link,outcome, intervention, size,
                               fileName = "BubbleChart.html") {
   
 
+  
     
   dNew <- data.frame(id = data[name])  
   
-  # remove when function
-  outcomeLabels <- c("CE1", "CE2", "PC1", "PC2", "AE1", "AE2")
-  interventionLabels <- c("ActiveSurveillance", "SLNBiopsy",
-    "Hormone", "Lumpectomy", "LumpectomyRT", "Mastectomy")
+  # get number of intervention labels, for check
+  nIntLabels <- length(intersect(interventionLabels, 
+                                 unique(data[[intervention]])))
+  if (!(nIntLabels == length(interventionLabels))) {
+    stop("Incorrect number of intervention labels supplied.")
+  }
+  rm(nIntLabels)
+  
+  nOutLabels <- length(intersect(outcomeLabels, 
+                                 unique(data[[outcome]])))
+  if (!(nOutLabels == length(outcomeLabels))) {
+    stop("Incorrect number of outcome labels supplied.")
+  }
+  rm(nIntLabels)
+  
   
   if(!is.null(catColors) & 
      length(catColors) != length(unique(data[[catVar]]))) {
