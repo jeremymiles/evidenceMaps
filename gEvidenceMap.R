@@ -3,13 +3,13 @@
 #' @param name The id variable that will be displayed as a label on 
 #'   the final chart.
 #' @param link The link that clicking on the bubble will take you to. 
-#' @param outcome The name (quoted) of the variable representing the
-#'   outcomes in the data.
-#' @param intervention The name (quoted) of the variable representing 
-#'   the intervention variable.
+#' @param xAxisVariable The name (quoted) of the variable representing the
+#'   x (horizontal) in the data.
+#' @param yAxisVariable The name (quoted) of the variable representing 
+#'   the y (vertical) variable.
 #' @param size The variable representing the count - the size of bubbles.
-#' @param outcomeLabels
-#' @param interventionLabels
+#' @param xAxisLabels
+#' @param yAxisLabels
 #' @param cat The categorical variables representing the colors.
 #' @param catColors Colors to be used for the categories in the evidence map
 #'   in alphabetical order. Color names can be taken from: 
@@ -19,68 +19,86 @@
 
 
 
-GoogleEvidenceMap <- function(data, name, link,outcome, intervention, size, 
-                              outcomeLabels = NULL,
-                              interventionLabels = NULL,
+GoogleEvidenceMap <- function(data, name, link, xAxisVariable, intervention, size, 
+                              xAxisLabels = NULL,
+                              yAxisLabels = NULL,
                               catVar,
                               catColors = NULL,
                               title = "Bubble Plot",
                               fileName = "BubbleChart.html") {
+
+  if(!(xAxisVariable %in% names(data))) {
+    stop("xAxisVariable variable ", xAxisVariable, " not in data.")
+  }
+  
+  
+  if(!(name %in% names(data))) {
+    stop("Name variable ", name, " not found in data.")
+  }
+  
+  if(!(yAxisVariable %in% names(data))) {
+    stop("yAxisVariable variable ", yAxisVariable, " not in data.")
+  }
   
 
-  
-    
-  dNew <- data.frame(id = data[name])  
-  
-  # get number of intervention labels, for check
-  nIntLabels <- length(intersect(interventionLabels, 
-                                 unique(data[[intervention]])))
-  if (!(nIntLabels == length(interventionLabels))) {
-    stop("Incorrect number of intervention labels supplied.")
+
+dNew <- data.frame(id = data[name])  
+
+
+  # get number of yAxisVariable labels, for check
+  yLabelsMatch <- tryCatch(all.equal(sort(yAxisLabels), 
+                              sort(unique(data[[yAxisVariable]]))))
+    if (yLabelsMatch != TRUE) { # no match
+    stop("Y axis labels provided and Y Axis variables don't match.\n",
+         "Y Axis Labels:\n", paste(sort(yAxisLabels), collapse = " "), "\n",
+         "Y Axis Values in data\n",
+         paste(sort(unique(data[[yAxisVariable]])), collapse = " "))
   }
-  rm(nIntLabels)
+  rm(yLabelsMatch)
   
-  nOutLabels <- length(intersect(outcomeLabels, 
-                                 unique(data[[outcome]])))
-  if (!(nOutLabels == length(outcomeLabels))) {
-    stop("Incorrect number of outcome labels supplied.")
+  xLabelsMatch <- tryCatch(all.equal(sort(xAxisLabels), 
+                                     sort(unique(data[[xAxisVariable]]))))
+  if (xLabelsMatch != TRUE) { # no match
+    stop("X axis labels provided and X Axis variables don't match.\n",
+         "X Axis Labels:\n", paste(sort(xAxisLabels), collapse = " "), "\n",
+         "X Axis Values in data\n",
+         paste(sort(unique(data[[xAxisVariable]])), collapse = " "))
   }
-  rm(nIntLabels)
-  
+  rm(xLabelsMatch)
   
   if(!is.null(catColors) & 
      length(catColors) != length(unique(data[[catVar]]))) {
     stop("Wrong number of category color labels supplied")
   }
   
-  dNew$outcome <- data[[outcome]]
-  dNew$intervention <- data[[intervention]]
+  dNew$xAxisVariable <- data[[xAxisVariable]]
+  dNew$yAxisVariable <- data[[yAxisVariable]]
   dNew$catVar <- data[[catVar]]
   
   # if labels are not supplied, create them alphabetically
-  if (is.null(outcomeLabels)) {
-    outcomeLabels <- unique(data[[outcomes]])
+  if (is.null(xAxisLabels)) {
+    xAxisLabels <- unique(data[[outcomes]])
   }
-  if (is.null(interventionLabels)) {
-    outcomeLabels <- unique(data[[intervention]])
+  if (is.null(yAxisLabels)) {
+    xAxisLabels <- unique(data[[yAxisVariable]])
   }
 
   dNew$link <- data[[link]]
   
-  if (is.character(dNew$outcome)) {
-  dNew$numericOutcome <- factor(dNew$outcome, 
-                              levels = outcomeLabels, 
+  if (is.character(dNew$xAxisVariable)) {
+  dNew$numericOutcome <- factor(dNew$xAxisVariable, 
+                              levels = xAxisLabels, 
                               ordered = TRUE) %>% as.numeric
   } else {
-    dNew$numericOutcome <- dNew$outcome
+    dNew$numericOutcome <- dNew$xAxisVariable
   }
   
-  if (is.character(dNew$intervention)) {
-    dNew$numericIntervention <- factor(dNew$intervention, 
-                                  levels = interventionLabels, 
+  if (is.character(dNew$yAxisVariable)) {
+    dNew$numericIntervention <- factor(dNew$yAxisVariable, 
+                                  levels = yAxisLabels, 
                                   ordered = TRUE) %>% as.numeric
   } else {
-    dNew$numericintervention <- dNew$intervention
+    dNew$numericintervention <- dNew$yAxisVariable
   }
   
   dNew$name <- data[[name]]
@@ -98,7 +116,7 @@ if (max(nMissing) > 0) {
 dNew <- dNew[nMissing == 0, ]
 
 # Need to find duplicates, and jitter them
-# Creat table of counts
+# Create table of counts
 countTab <- as.data.frame(table(dNew$numericOutcome,
                                 dNew$numericIntervention))
 
@@ -116,8 +134,8 @@ for (i in 1:nrow(countTab)) {
 }
 
 dJSHeader <- paste0("['", name,"', '",
-                    outcome, "', ",
-                    "'", intervention, "', '",
+                    xAxisVariable, "', ",
+                    "'", yAxisVariable, "', '",
                     catVar, "', '",
                     size, "', '",
                     link, "', ",
@@ -158,17 +176,17 @@ html2 <- "      ]);\n\n"
 
 html3 <- "      var options = {"
 html4 <- paste0("title: '", title, "',\n")
-html5 <- paste0("hAxis: {title: '", outcome, "',\n ticks: [")
+html5 <- paste0("hAxis: {title: '", xAxisVariable, "',\n ticks: [")
 
-# Sort out labels for the x-axis (outcome)
-xAxisNums <- 1:length(unique(dNew$outcome))
+# Sort out labels for the x-axis (xAxisVariable)
+xAxisNums <- 1:length(unique(dNew$xAxisVariable))
 # Do the zeroth first
 html6 <- paste0("{v: 0, f: ''},")
 # loop through all nums
 html6 <- "{v: 0, f: ''},\n"
 for (i in xAxisNums) {
   html6 <- paste0(html6,
-                  "{v: ", i, ", f: '", outcomeLabels[i], "'},\n")
+                  "{v: ", i, ", f: '", xAxisLabels[i], "'},\n")
 }
 i <- i + 1
 html6 <- paste0(html6, "{v: ", i, ", f: ' ", "'},\n
@@ -176,16 +194,16 @@ html6 <- paste0(html6, "{v: ", i, ", f: ' ", "'},\n
 				},")
 rm(i)           
 
-html7 <- paste0("vAxis: {title: '", intervention, "',\n ticks: [")
-# Sort out labels for the y-axis (intervention)
-yAxisNums <- 1:length(unique(dNew$intervention))
+html7 <- paste0("vAxis: {title: '", yAxisVariable, "',\n ticks: [")
+# Sort out labels for the y-axis (yAxisVariable)
+yAxisNums <- 1:length(unique(dNew$yAxisVariable))
 # Do the zeroth first
 html8 <- paste0("{v: 0, f: ''},")
 # loop through all nums
 html8 <- "{v: 0, f: ''},\n"
-for (i in xAxisNums) {
+for (i in yAxisNums) {
   html8 <- paste0(html8,
-                  "{v: ", i, ", f: '", interventionLabels[i], "'},\n")
+                  "{v: ", i, ", f: '", yAxisLabels[i], "'},\n")
 }
 i <- i + 1
 html8 <- paste0(html8, "{v: ", i, ", f: '", "'},\n")
