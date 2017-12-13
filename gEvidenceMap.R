@@ -28,7 +28,9 @@ GoogleEvidenceMap <- function(data, name, link,
                               catVar,
                               catColors = NULL,
                               title = "Bubble Plot",
-                              fileName = "BubbleChart.html") {
+                              fileName = "BubbleChart.html",
+                              height = 600,
+                              width = 1200) {
 
   if(!(xAxisVariable %in% names(data))) {
     stop("xAxisVariable variable ", xAxisVariable, " not in data.")
@@ -122,6 +124,10 @@ dNew <- dNew[nMissing == 0, ]
 # Create table of counts
 countTab <- as.data.frame(table(dNew$numericOutcome,
                                 dNew$numericIntervention))
+
+
+# going to create a new link, linking to a doc if more than one study.
+dNew$newLink <- dNew$link
 
 # loop through the table, 'cos I can't think of a better way.
 for (i in 1:nrow(countTab)) {
@@ -225,7 +231,7 @@ if(!is.null(catColors)) {
 html10 <- paste0(html10, "\n 		}};")
 
 ## Last bit!! (which we don't really need to understand)
-html11 <- "
+html11 <- sprintf("
 
       var chart = new google.visualization.BubbleChart(document.getElementById('chart_div'));
 chart.draw(data, options);
@@ -242,9 +248,9 @@ google.visualization.events.addListener(chart, 'select', selectHandler);
 </script>
 </head>
 <body>
-<div id='chart_div' style='width: 1200px; height: 800px;'></div>
+<div id='chart_div' style='width: %ipx; height: %ipx;'></div>
 </body>
-</html>"
+</html>", width, height)
 
 # put them all together
 allHtml <- c(html1, 
