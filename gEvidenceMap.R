@@ -19,7 +19,7 @@
 
 
 
-GoogleEvidenceMap <- function(data, name, link, xAxisVariable, intervention, size, 
+GoogleEvidenceMap <- function(data, name, link, xAxisVariable, yAxisVariable, size, 
                               xAxisLabels = NULL,
                               yAxisLabels = NULL,
                               catVar,
