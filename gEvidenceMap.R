@@ -19,9 +19,12 @@
 
 
 
-GoogleEvidenceMap <- function(data, name, link, xAxisVariable, yAxisVariable, size, 
+GoogleEvidenceMap <- function(data, name, link, 
+                              xAxisVariable, 
+                              yAxisVariable, 
                               xAxisLabels = NULL,
                               yAxisLabels = NULL,
+                              size, 
                               catVar,
                               catColors = NULL,
                               title = "Bubble Plot",
